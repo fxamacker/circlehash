@@ -33,7 +33,7 @@
 #   - sha256(linux-amd64.tar.gz) is 214b093c15863430c4b66dd39df677dab6e38fc873ded147e331740d50eea51f
 #   - sha384(linux-amd64.tar.gz) is 80e7e4afb5a58985fdd2ee7c099086541bc41a46b59dac1ae04f73c25abeafe30e5cd91dd1a57dc754efaad779c849cb
 #
-name: Lint
+name: linters
 
 on:  
   pull_request:
