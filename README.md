@@ -1,7 +1,7 @@
 # CircleHash
 
 [![](https://github.com/fxamacker/circlehash/workflows/CI/badge.svg)](https://github.com/fxamacker/circlehash/actions?query=workflow%3ACI)
-[![](https://github.com/fxamacker/circlehash/workflows/cover%20%E2%89%A598%25/badge.svg)](https://github.com/fxamacker/circlehash/actions?query=workflow%3A%22cover+%E2%89%A598%25%22)
+[![](https://github.com/fxamacker/circlehash/workflows/cover%20100%25/badge.svg)](https://github.com/fxamacker/circlehash/actions?query=workflow%3A%22cover+%E2%89%A598%25%22)
 [![](https://github.com/fxamacker/circlehash/workflows/linters/badge.svg)](https://github.com/fxamacker/circlehash/actions?query=workflow%3Alinters)
 
 CircleHash is a family of non-cryptographic hash functions that pass every test in SMHasher (both rurban/smhasher and demerphq/smhasher).  Tests passed include [Strict Avalanche Criterion](https://en.wikipedia.org/wiki/Avalanche_effect#Strict_avalanche_criterion), Bit Independence Criterion, and many others.
