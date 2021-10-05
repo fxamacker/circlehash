@@ -4,7 +4,7 @@
 [![](https://github.com/fxamacker/circlehash/workflows/cover%20100%25/badge.svg)](https://github.com/fxamacker/circlehash/actions?query=workflow%3A%22cover+%E2%89%A598%25%22)
 [![](https://github.com/fxamacker/circlehash/workflows/linters/badge.svg)](https://github.com/fxamacker/circlehash/actions?query=workflow%3Alinters)
 
-CircleHash is a family of non-cryptographic hash functions that pass every test in SMHasher (both rurban/smhasher and demerphq/smhasher).  Tests passed include [Strict Avalanche Criterion](https://en.wikipedia.org/wiki/Avalanche_effect#Strict_avalanche_criterion), Bit Independence Criterion, and many others.
+CircleHash is a family of non-cryptographic hash functions that pass every test in SMHasher (demerphq/smhasher, rurban/smhasher, and mine).  Tests passed include Strict Avalanche Criterion, Bit Independence Criterion, and many others.
 
 CircleHash uses the fractional digits of **π** as default constants ([nothing up my sleeve](https://en.wikipedia.org/wiki/Nothing-up-my-sleeve_number)). The code is simple and easy to audit.  I tried to balance competing factors such as speed, digest quality, and maintainability.
 
@@ -16,7 +16,15 @@ I wanted a very fast, maintainable, and easy-to-audit hash function that's free 
 
 It needed to pass all tests in both demerphq/smhasher and rurban/smhasher.  It also needed to have sufficiently explained choice of default constants and avoid over-optimizations that increase risk of being affected by bad seeds or efficient seed-independent attacks.
 
-Existing non-cryptographic hash libraries in Go either failed SMhasher tests, didn't support seeds, were too slow, were overly complicated, lacked sufficient explanation for their default constants, lacked sufficient tests, or appeared to be unmaintained.  
+Existing non-cryptographic hash libraries in Go either failed SMhasher tests, didn't support seeds, were too slow, were overly complicated, lacked sufficient explanation for their default constants, lacked sufficient tests, or appeared to be unmaintained.
+
+CircleHash64 uses CircleHash64f by default, which is based on [Google's Abseil C++ library](https://abseil.io/about/) internal hash. CircleHash64 has good results for [Strict Avalanche Criterion (SAC)](https://en.wikipedia.org/wiki/Avalanche_effect#Strict_avalanche_criterion).  🚀  Unoptimized CircleHash64 has the same speed as Abseil's internal hash.
+
+|                | CircleHash64 | Abseil C++ | wyhash_final3 | SipHash-2-4 |
+| :---           | :---:         | :---:  | :---:   | :---: |
+| SAC worst-bit <br/> 0-33 byte inputs <br/> (lower % is better) | 0.754% <br/> w/ 29 bytes | 0.829% <br/> w/ 22 bytes | 0.772% <br/> w/ 24 bytes | 0.768% <br/> w/ 29 bytes |
+
+☝️ Using demerphq/smhasher updated to test all input sizes 0-33 bytes. SipHash is shown because it is well-known.
 
 ## CircleHash Design
 
