@@ -8,23 +8,25 @@ CircleHash is a family of non-cryptographic hash functions that pass every test 
 
 CircleHash uses the fractional digits of **π** as default constants ([nothing up my sleeve](https://en.wikipedia.org/wiki/Nothing-up-my-sleeve_number)). The code is simple and easy to audit.  I tried to balance competing factors such as speed, digest quality, and maintainability.
 
-CircleHash64 variants produce 64-bit digests and support 64-bit seeds.  They are very fast and guaranteed to produce compatible digests within the same major release (SemVer 2.0).  
+CircleHash64 variants produce 64-bit digests and support 64-bit seeds.  They produce compatible digests within the same major release (SemVer 2.0).
+
+CircleHash64 is based on [Google's Abseil C++ library](https://abseil.io/about/) internal hash. CircleHash64 has good results for [Strict Avalanche Criterion (SAC)](https://en.wikipedia.org/wiki/Avalanche_effect#Strict_avalanche_criterion).  🚀  Unoptimized CircleHash64 in C++ is fast as Abseil C++ internal hash.
+
+|                | CircleHash64 | Abseil C++ | SipHash-2-4 |
+| :---           | :---:         | :---:  | :---: |
+| SAC worst-bit <br/> 0-32 byte inputs <br/> (lower % is better) | 0.754% <br/> w/ 29 bytes | 0.829% <br/> w/ 22 bytes | 0.768% <br/> w/ 29 bytes |
+
+☝️ Using demerphq/smhasher updated to test all input sizes 0-32 bytes (tests will take much longer to finish).
+
+ℹ️ Non-cryptographic hashes should only be used in software designed to properly handle hash collisions.  If you require a secure hash, please use a cryptographic hash (like the ones in SHA-3 standard).
 
 ## Why CircleHash?
 
 I wanted a very fast, maintainable, and easy-to-audit hash function that's free of backdoors and bugs.
 
-It needed to pass all tests in both demerphq/smhasher and rurban/smhasher.  It also needed to have sufficiently explained choice of default constants and avoid over-optimizations that increase risk of being affected by bad seeds or efficient seed-independent attacks.
+It needed to pass all tests in demerphq/smhasher, rurban/smhasher, and my test suite.  It also needed to have sufficiently explained choice of default constants and avoid over-optimizations that increase risk of being affected by bad seeds or efficient seed-independent attacks.
 
 Existing non-cryptographic hash libraries in Go either failed SMhasher tests, didn't support seeds, were too slow, were overly complicated, lacked sufficient explanation for their default constants, lacked sufficient tests, or appeared to be unmaintained.
-
-CircleHash64 uses CircleHash64f by default, which is based on [Google's Abseil C++ library](https://abseil.io/about/) internal hash. CircleHash64 has good results for [Strict Avalanche Criterion (SAC)](https://en.wikipedia.org/wiki/Avalanche_effect#Strict_avalanche_criterion).  🚀  Unoptimized CircleHash64 has the same speed as Abseil's internal hash.
-
-|                | CircleHash64 | Abseil C++ | wyhash_final3 | SipHash-2-4 |
-| :---           | :---:         | :---:  | :---:   | :---: |
-| SAC worst-bit <br/> 0-33 byte inputs <br/> (lower % is better) | 0.754% <br/> w/ 29 bytes | 0.829% <br/> w/ 22 bytes | 0.772% <br/> w/ 24 bytes | 0.768% <br/> w/ 29 bytes |
-
-☝️ Using demerphq/smhasher updated to test all input sizes 0-33 bytes. SipHash is shown because it is well-known.
 
 ## CircleHash Design
 
@@ -38,7 +40,7 @@ CircleHash comes in two flavors:
 
 - 🚀 **CircleHash64f** can be configured to produce same digests as Abseil LTS 20210324.2.  By default, CircleHash64f uses two different 64-bit constants rather than using the same 64-bit constant twice at finalization.  And unlike internal hashes, CircleHash64f offers backward compatibility (SemVer 2.0).
 
-👉 Non-cryptographic hashes should only be used in software designed to properly handle hash collisions.  If you require a secure hash, please use a cryptographic hash (like the ones in SHA-3 standard).
+CircleHash64 uses CircleHash64f by default.
 
 ## CircleHash Speed in Go and C++
 
@@ -50,7 +52,7 @@ CircleHash64f and CircleHash64s are extremely fast 64-bit hashes that support a 
      foo = uint64_a % uint64_b  // slower than CircleHash64f and CircleHash64s on Haswell Xeon
 ```
 
-Speeds were compared using Go 1.16.8 on linux_amd64 (Haswell CPU) with CircleHash written in plain Go (no assembly).
+Speeds were compared using Go 1.16.8 on linux_amd64 (Haswell CPU) with unoptimized CircleHash64. On newer Intel CPUs the modulus can be slightly faster.
 
 When compiled with g++ 9.3 on linux_amd64 (Haswell CPU), CircleHash64f and CircleHash64s are among the fastest hashes for short inputs.
 
@@ -65,16 +67,17 @@ When compiled with g++ 9.3 on linux_amd64 (Haswell CPU), CircleHash64f and Circl
       - [x] CircleHash64f configured for compatibility with Abseil LTS 20210324.2
       - [x] CircleHash64f configured for improved entropy in finalization
       - [x] CircleHash64f and CircleHash64s internal tests
-          - [x] Go 16.8 on linux_amd64
+          - [x] Go 1.16.8 on linux_amd64
+          - [x] Go 1.16.8 on darwin_amd64
           - [x] g++ 9.3 on linux x86_64
-          - [ ] Go 16.8 on linux_arm64
+          - [ ] Go 1.16.8 on linux_arm64
           - [ ] additional systems
           - [ ] additional versions of Go
           - [ ] tidy up and publish internal test code
           - [ ] long-running collision tests (need big server 256 GB RAM)
-  - [ ] publish compatibility test vectors
-  - [ ] publish Go reference code for CircleHash64f
-  - [ ] publish Go reference code for CircleHash64s
+  - [x] publish Go reference code for CircleHash64f
+  - [ ] publish compatibility test vectors for CircleHash64f
+  - [ ] publish Go reference code and compatibility test vectors for CircleHash64s
   - [ ] publish C++ version
   - [ ] release tag
   - [ ] detailed benchmarks and comparisons for every input size 0-64 bytes (and more)
