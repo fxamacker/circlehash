@@ -1,20 +1,23 @@
 # CircleHash
 
 [![](https://github.com/fxamacker/circlehash/workflows/CI/badge.svg)](https://github.com/fxamacker/circlehash/actions?query=workflow%3ACI)
-[![](https://github.com/fxamacker/circlehash/workflows/cover%20100%25/badge.svg)](https://github.com/fxamacker/circlehash/actions?query=workflow%3A%22cover+100%25%22)
 [![](https://github.com/fxamacker/circlehash/workflows/linters/badge.svg)](https://github.com/fxamacker/circlehash/actions?query=workflow%3Alinters)
+[![CodeQL](https://github.com/fxamacker/circlehash/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/fxamacker/circlehash/actions/workflows/codeql-analysis.yml)
+[![](https://github.com/fxamacker/circlehash/workflows/cover%20100%25/badge.svg)](https://github.com/fxamacker/circlehash/actions?query=workflow%3A%22cover+100%25%22)
 
-CircleHash is a family of non-cryptographic hash functions that pass every test in SMHasher (demerphq/smhasher, rurban/smhasher, and mine).  Tests passed include Strict Avalanche Criterion, Bit Independence Criterion, and many others.
+CircleHash is a family of non-cryptographic hash functions that pass every test in SMHasher (demerphq/smhasher, rurban/smhasher, and my stricter test suite).  Tests passed include Strict Avalanche Criterion, Bit Independence Criterion, and many others.
 
-CircleHash64 uses the fractional digits of **π** as default constants ([nothing up my sleeve](https://en.wikipedia.org/wiki/Nothing-up-my-sleeve_number)). The code is simple and easy to audit.  I tried to balance competing factors such as speed, digest quality, and maintainability.
+CircleHash64 uses the fractional digits of **π** as default constants ([nothing up my sleeve](https://en.wikipedia.org/wiki/Nothing-up-my-sleeve_number)). CircleHash64 is very simple and easy to audit.  I tried to balance competing factors such as speed, digest quality, and maintainability.
 
-CircleHash64 is based on [Google's Abseil C++ library](https://abseil.io/about/) internal hash.  🚀  Unoptimized CircleHash64 in C++ is fast as Abseil C++ internal hash.  CircleHash64 has good results for [Strict Avalanche Criterion (SAC)](https://en.wikipedia.org/wiki/Avalanche_effect#Strict_avalanche_criterion).
+CircleHash64 is based on [Google's Abseil C++ library](https://abseil.io/about/) internal hash.  🚀  CircleHash64 in C++ is fast as Abseil C++ internal hash. Unoptimized CircleHash64 in Go is faster than most Go+Assembly hash functions at hashing small keys with a seed.
 
-|                | CircleHash64 | Abseil C++ | SipHash-2-4 |
-| :---           | :---:         | :---:  | :---: |
-| SAC worst-bit <br/> 0-32 byte inputs <br/> (lower % is better) | 0.754% <br/> w/ 29 bytes | 0.829% <br/> w/ 22 bytes | 0.768% <br/> w/ 29 bytes |
+CircleHash64 achieves competitive results for [Strict Avalanche Criterion (SAC)](https://en.wikipedia.org/wiki/Avalanche_effect#Strict_avalanche_criterion).
 
-☝️ Using demerphq/smhasher updated to test all input sizes 0-32 bytes (tests will take much longer to finish).
+|                | CircleHash64 | Abseil C++ | SipHash-2-4 | xxh64 | xxh3 |
+| :---           | :---:         | :---:  | :---: | :---: | :---: |
+| SAC worst-bit <br/> 0-128 byte inputs <br/> (lower % is better) | 0.791% 🥇 <br/> w/ 99 bytes | 0.862% <br/> w/ 67 bytes | 0.852% <br/> w/ 125 bytes | 0.832% <br/> w/ 113 bytes | 0.830% <br/> w/ 61 bytes |
+
+☝️ Using demerphq/smhasher updated to test all input sizes 0-128 bytes (SAC test will take hours longer to run).
 
 ℹ️ Non-cryptographic hashes should only be used in software designed to properly handle hash collisions.  If you require a secure hash, please use a cryptographic hash (like the ones in SHA-3 standard).
 
@@ -85,7 +88,9 @@ Coming soon... For best results, it's better to do your own benchmarks using you
 
 ## Release Policy
 
-This project uses Semantic Versioning 2.0.
+This project uses Semantic Versioning 2.0.  
+
+As an exception, some variants of CircleHash may be declared stable before this repo reaches v1.0.  I.e. given the same input data, the hash function will always produce the same digest.  Such declarations will be noted in the README and applicable release notes.
 
 ## Special Thanks and Credits
   - Go Team for making programming more fun and productive.
