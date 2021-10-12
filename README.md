@@ -13,9 +13,9 @@ CircleHash64 is based on [Google's Abseil C++ library](https://abseil.io/about/)
 
 CircleHash64 achieves competitive results for [Strict Avalanche Criterion (SAC)](https://en.wikipedia.org/wiki/Avalanche_effect#Strict_avalanche_criterion).
 
-|                | CircleHash64 | Abseil C++ | SipHash-2-4 | xxh64 | xxh3 |
-| :---           | :---:         | :---:  | :---: | :---: | :---: |
-| SAC worst-bit <br/> 0-128 byte inputs <br/> (lower % is better) | 0.791% 🥇 <br/> w/ 99 bytes | 0.862% <br/> w/ 67 bytes | 0.852% <br/> w/ 125 bytes | 0.832% <br/> w/ 113 bytes | 0.830% <br/> w/ 61 bytes |
+|                | CircleHash64 | Abseil C++ | SipHash-2-4 | xxh64 |
+| :---           | :---:         | :---:  | :---: | :---: |
+| SAC worst-bit <br/> 0-128 byte inputs <br/> (lower % is better) | 0.791% 🥇 <br/> w/ 99 bytes | 0.862% <br/> w/ 67 bytes | 0.852% <br/> w/ 125 bytes | 0.832% <br/> w/ 113 bytes |
 
 ☝️ Using demerphq/smhasher updated to test all input sizes 0-128 bytes (SAC test will take hours longer to run).
 
