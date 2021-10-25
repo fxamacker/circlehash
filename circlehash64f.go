@@ -96,3 +96,13 @@ func circle64f(p unsafe.Pointer, seed uint64, dlen uint64) uint64 {
 	z := pi4 ^ startingLength // wyhash reuses salt1 here, but CircleHash64 (like Go 1.17) avoids reusing it here
 	return mix64(w, z)
 }
+
+// circle64fUint64x2 produces a 64-bit digest from a, b, and seed.
+// Digest is compatible with circlehash64f with byte slice of len 16.
+func circle64fUint64x2(a uint64, b uint64, seed uint64) uint64 {
+	const dataLen = uint64(16)
+	currentState := seed ^ pi0
+	w := mix64(a^pi1, b^currentState)
+	z := pi4 ^ dataLen
+	return mix64(w, z)
+}

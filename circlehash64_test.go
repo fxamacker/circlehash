@@ -302,9 +302,18 @@ func nonUniformBytes16KiB() []byte {
 // countedCircleHash64 calls Hash64 and increments countCircleHash64.
 func countedCircleHash64(t *testing.T, data []byte, seed uint64) uint64 {
 	digest := Hash64(data, seed)
-	digest2 := HashString64(string(data), seed)
+	digest2 := Hash64String(string(data), seed)
 	if digest != digest2 {
-		t.Errorf("Hash64() 0x%x != HashString64() 0x%x", digest, digest2)
+		t.Errorf("Hash64() 0x%x != Hash64String() 0x%x", digest, digest2)
+	}
+
+	if len(data) == 16 {
+		a := binary.LittleEndian.Uint64(data)
+		b := binary.LittleEndian.Uint64(data[8:])
+		digest3 := Hash64Uint64x2(a, b, seed)
+		if digest != digest3 {
+			t.Errorf("Hash64() 0x%x != Hash64Uint64x2() 0x%x", digest, digest3)
+		}
 	}
 
 	collisions[digest]++
