@@ -14,12 +14,24 @@
 
 package circlehash
 
+import (
+	"unsafe"
+)
+
 // Hash64 returns a 64-bit digest of data.
+// Digest is compatible with CircleHash64f.
 func Hash64(b []byte, seed uint64) uint64 {
-	return uint64(circle64f(*(*ptr)(ptr(&b)), seed, uint64(len(b))))
+	return uint64(circle64f(*(*unsafe.Pointer)(unsafe.Pointer(&b)), seed, uint64(len(b))))
 }
 
-// HashString64 returns a 64-bit digest of string s.
-func HashString64(s string, seed uint64) uint64 {
-	return uint64(circle64f(*(*ptr)(ptr(&s)), seed, uint64(len(s))))
+// Hash64String returns a 64-bit digest of s.
+// Digest is compatible with Hash64.
+func Hash64String(s string, seed uint64) uint64 {
+	return uint64(circle64f(*(*unsafe.Pointer)(unsafe.Pointer(&s)), seed, uint64(len(s))))
+}
+
+// Hash64Uint64x2 returns a 64-bit digest of a and b.
+// Digest is compatible with Hash64 with byte slice of len 16.
+func Hash64Uint64x2(a uint64, b uint64, seed uint64) uint64 {
+	return circle64fUint64x2(a, b, seed)
 }
