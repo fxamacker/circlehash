@@ -12,44 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Reference implementation of CircleHash64 is maintained at
+// https://github.com/fxamacker/circlehash
+
+// This file is for Go versions >= 1.17.
+//go:build go1.17
+// +build go1.17
+
 package circlehash
 
 import (
 	"unsafe"
 )
 
-func circle64f(p unsafe.Pointer, seed uint64, dlen uint64) uint64 {
+// circle64fShortInput produces a digest from input with length up to 64 bytes.
+// WARNING: The caller MUST check the input length before calling this function.
+// WARNING: This function must not be exported without adding error handling.
+func circle64fShortInput(p unsafe.Pointer, seed uint64, dlen uint64) uint64 {
 
 	startingLength := dlen
 	currentState := seed ^ pi0
-
-	if dlen > 64 {
-		// Process chunks of 64 bytes.
-		duplicatedState := currentState
-
-		for ; dlen > 64; dlen -= 64 {
-			a := readUnaligned64(p)
-			b := readUnaligned64(add(p, 8))
-			c := readUnaligned64(add(p, 16))
-			d := readUnaligned64(add(p, 24))
-			e := readUnaligned64(add(p, 32))
-			f := readUnaligned64(add(p, 40))
-			g := readUnaligned64(add(p, 48))
-			h := readUnaligned64(add(p, 56))
-
-			cs0 := mix64(a^pi1, b^currentState)
-			cs1 := mix64(c^pi2, d^currentState)
-			currentState = (cs0 ^ cs1)
-
-			ds0 := mix64(e^pi3, f^duplicatedState)
-			ds1 := mix64(g^pi4, h^duplicatedState)
-			duplicatedState = (ds0 ^ ds1)
-
-			p = add(p, 64)
-		}
-
-		currentState = currentState ^ duplicatedState
-	}
 
 	// We have at most 64 bytes to process.
 	// Process chunks of 16 bytes
@@ -92,15 +74,5 @@ func circle64f(p unsafe.Pointer, seed uint64, dlen uint64) uint64 {
 	// We use pi1 and pi4 during finalization (abseil and wyhash reuses same const)
 	w := mix64(a^pi1, b^currentState)
 	z := pi4 ^ startingLength
-	return mix64(w, z)
-}
-
-// circle64fUint64x2 produces a 64-bit digest from a, b, and seed.
-// Digest is compatible with circlehash64f with byte slice of len 16.
-func circle64fUint64x2(a uint64, b uint64, seed uint64) uint64 {
-	const dataLen = uint64(16)
-	currentState := seed ^ pi0
-	w := mix64(a^pi1, b^currentState)
-	z := pi4 ^ dataLen
 	return mix64(w, z)
 }
