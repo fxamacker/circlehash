@@ -1,4 +1,4 @@
-// Copyright 2021 Faye Amacker
+// Copyright 2021-2022 Faye Amacker
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,6 +11,10 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+// This file is for Go versions older than 1.17.
+//go:build !go1.17
+// +build !go1.17
 
 package circlehash
 
