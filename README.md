@@ -117,4 +117,4 @@ As an exception, some variants of CircleHash may be declared stable before this 
 
 The CircleHash library is licensed under the terms of the Apache license. See [LICENSE](LICENSE) for more information.
 
-Copyright © 2021 Faye Amacker.
+Copyright © 2021-2022 Faye Amacker.
