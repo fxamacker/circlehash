@@ -9,15 +9,30 @@ CircleHash is a family of non-cryptographic hash functions that pass every test 
 
 CircleHash64 uses the fractional digits of **π** as default constants ([nothing up my sleeve](https://en.wikipedia.org/wiki/Nothing-up-my-sleeve_number)). CircleHash64 is very simple and easy to audit.  I tried to balance competing factors such as speed, digest quality, and maintainability.
 
-CircleHash64 is based on [Google's Abseil C++ library](https://abseil.io/about/) internal hash.  🚀  CircleHash64 in C++ is fast as Abseil C++ internal hash. Unoptimized CircleHash64 in Go is faster than most Go+Assembly hash functions at hashing small keys with a seed.
+CircleHash64 uses CircleHash64f by default, which is based on [Google's Abseil C++ library](https://abseil.io/about/) internal hash.
 
-CircleHash64 achieves competitive results for [Strict Avalanche Criterion (SAC)](https://en.wikipedia.org/wiki/Avalanche_effect#Strict_avalanche_criterion).
+### CircleHash64 has good results in [Strict Avalanche Criterion (SAC)](https://en.wikipedia.org/wiki/Avalanche_effect#Strict_avalanche_criterion).
 
 |                | CircleHash64 | Abseil C++ | SipHash-2-4 | xxh64 |
 | :---           | :---:         | :---:  | :---: | :---: |
 | SAC worst-bit <br/> 0-128 byte inputs <br/> (lower % is better) | 0.791% 🥇 <br/> w/ 99 bytes | 0.862% <br/> w/ 67 bytes | 0.852% <br/> w/ 125 bytes | 0.832% <br/> w/ 113 bytes |
 
 ☝️ Using demerphq/smhasher updated to test all input sizes 0-128 bytes (SAC test will take hours longer to run).
+
+### CircleHash64 is fast at hashing short inputs with a 64-bit seed.
+|              | CircleHash64 | XXH3 | XXH64 <br/>(w/o seed) | SipHash |
+|:-------------|:---:|:---:|:---:|:---:|
+| 4 bytes | 1.34 GB/s | 1.21 GB/s| 0.877 GB/s | 0.361 GB/s |
+| 8 bytes | 2.70 GB/s | 2.41 GB/s | 1.68 GB/s | 0.642 GB/s |
+| 16 bytes | 5.48 GB/s | 5.21 GB/s | 2.94 GB/s | 1.03 GB/s |
+| 32 bytes | 8.01 GB/s | 7.08 GB/s | 3.33 GB/s | 1.46 GB/s |
+| 64 bytes | 10.3 GB/s | 9.33 GB/s | 5.47 GB/s | 1.83 GB/s |
+| 128 bytes | 12.8 GB/s | 11.6 GB/s | 8.22 GB/s | 2.09 GB/s |
+| 192 bytes | 14.2 GB/s | 9.86 GB/s | 9.71 GB/s | 2.17 GB/s |
+| 256 bytes | 15.0 GB/s | 8.19 GB/s | 10.2 GB/s | 2.22 GB/s |
+
+- Using Go 1.17.7 (benchstat output), darwin_amd64, i7-1068N7 CPU  
+- Fastest XXH64 (written in Go+Assembly) doesn't support seed.
 
 ℹ️ Non-cryptographic hashes should only be used in software designed to properly handle hash collisions.  If you require a secure hash, please use a cryptographic hash (like the ones in SHA-3 standard).
 
