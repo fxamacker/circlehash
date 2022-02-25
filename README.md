@@ -31,7 +31,7 @@ CircleHash64 uses CircleHash64f by default, which is based on [Google's Abseil C
 | 192 bytes | 14.2 GB/s | 9.86 GB/s | 9.71 GB/s | 2.17 GB/s |
 | 256 bytes | 15.0 GB/s | 8.19 GB/s | 10.2 GB/s | 2.22 GB/s |
 
-- Using Go 1.17.7 (benchstat output), darwin_amd64, i7-1068N7 CPU  
+- Using Go 1.17.7, darwin_amd64, i7-1068N7 CPU  
 - Fastest XXH64 (written in Go+Assembly) doesn't support seed.
 
 ℹ️ Non-cryptographic hashes should only be used in software designed to properly handle hash collisions.  If you require a secure hash, please use a cryptographic hash (like the ones in SHA-3 standard).
@@ -56,23 +56,15 @@ CircleHash64 comes in two flavors:
 
 - 🚀 **CircleHash64f** can be configured to produce same digests as Abseil LTS 20210324.2.  By default, CircleHash64f uses two different 64-bit constants rather than using the same 64-bit constant twice at finalization.  And unlike internal hashes, CircleHash64f offers backward compatibility (SemVer 2.0).
 
-CircleHash64 uses CircleHash64f by default and supports 64-bit seeds.
-
-## CircleHash Speed in Go and C++
-
-CircleHash64 is among the fastest hashes for short inputs. Unoptimized CircleHash64 in Go is faster than optimized XXH64 in Go+Assembly.
-
-CircleHash64 is faster than executing this assignment just once in a Go program:
-
-```Go 
-     foo = uint64_a % uint64_b  // slower than CircleHash64f and CircleHash64fx on Haswell Xeon
-```
-
-Speeds were compared using Go 1.16.8 on linux_amd64 (Haswell CPU) with unoptimized CircleHash64. On newer Intel CPUs the modulus can be slightly faster.
+CircleHash64 uses CircleHash64f by default and supports 64-bit seeds.  It was created when I needed a very fast seeded hash for inputs mostly <= 128 bytes.
 
 ## Benchmarks
 
-Coming soon... For best results, it's better to do your own benchmarks using your own hardware and your most common data sizes.
+CircleHash64f is ideal for input sizes <= 512 bytes.  Larger inputs can be hashed faster using other CircleHash designs (not yet published).
+
+For best results, it's better to do your own benchmarks using your own hardware and your most common data sizes.
+
+Coming soon...
 
 ## Status [DRAFT]
   - [x] dependable release policy: all tests must pass and enforce Semantic Versioning 2.0
@@ -94,9 +86,11 @@ Coming soon... For best results, it's better to do your own benchmarks using you
           - [ ] 32-bit archs
           - [ ] long-running collision tests (need big server 256 GB RAM)
   - [x] publish reference code for CircleHash64f in Go
+  - [x] publish compatibility test vectors for CircleHash64f (see *_test.go)
+  - [x] publish preliminary benchmarks comparisons for CircleHash64f reference implementation (Go without assembly language)
+  - [ ] publish detailed benchmarks that include all input sizes <= 128 bytes (or <= 256 bytes if time allows)
   - [ ] publish reference code for CircleHash64fx in Go
-  - [ ] publish compatibility test vectors for CircleHash64f
-  - [ ] publish benchmarks for unoptimized CircleHash64 reference implementation (Go)
+  - [ ] publish reference code for CircleHash128
   - [ ] provide implementations in other languages
   - [ ] provide optional functions for creating high quality seeds
   - [ ] provide optional functions for creating high quality constants (to override **π**)
