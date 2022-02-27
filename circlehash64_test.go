@@ -24,15 +24,15 @@ import (
 	"testing"
 )
 
-// CircleHash64 uses CircleHash64f as default hash. Expected SHA-512 checksums are
+// CircleHash64 uses CircleHash64f as default hash. Expected SHA-512 digests are
 // from the C++ and Go CircleHash reference implementations by Faye Amacker.
 // SHA-512 is used because it's included in Go and available in many languages.
 //
-// Compatibility tests check CircleHash64 digests produced by hashing
-// input sizes of various lengths (0-16384 bytes).
+// Compatibility tests check nearly 600000 CircleHash64 digests produced by hashing
+// input sizes of various lengths (0-16384 bytes) and using different seeds.
 //
-// Tests for input sizes greater than 128 bytes can help future implementations
-// that rely on input size to determine which optimized version to execute.
+// Tests for input sizes greater than 128 bytes can verify future hash implementations
+// that rely on larger input sizes to determine which optimized code path is executed.
 //
 // Passing these compatibility tests inherits non-benchmark SMHasher test results.
 // CircleHash64 passes important tests not included in this file. For example:
@@ -177,6 +177,7 @@ func TestCircleHash64NonUniformBitPatternInputs(t *testing.T) {
 
 			h := sha512.New()
 
+			// verify hash of 1-16384 bytes of test data by varying start pos
 			checksumVaryingStartPos(t, h, tc.seed, data)
 			got := h.Sum(nil)
 			if !bytes.Equal(got, tc.wantSHA512VaringStartPos) {
@@ -187,6 +188,7 @@ func TestCircleHash64NonUniformBitPatternInputs(t *testing.T) {
 
 			h.Reset()
 
+			// verify hash of 1-16384 bytes of test data by varying end pos
 			checksumVaryingEndPos(t, h, tc.seed, data)
 			got = h.Sum(nil)
 			if !bytes.Equal(got, tc.wantSHA512VaringEndPos) {
