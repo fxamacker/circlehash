@@ -52,7 +52,7 @@ const (
 )
 
 var countCircleHash64f uint64 // count calls to Hash64 (doesn't include calls to HashString64)
-var collisions = make(map[uint64]uint64)
+var collisions = make(map[uint64]uint64) // a few inputs are repeated in tests, so this will be nonzero
 
 func TestCircleHash64EmptyInputs(t *testing.T) {
 
