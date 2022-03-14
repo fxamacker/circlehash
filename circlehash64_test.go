@@ -1,4 +1,4 @@
-// Copyright 2021 Faye Amacker
+// Copyright 2021-2022 Faye Amacker
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,6 +11,11 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+// Official reference implementation of CircleHash64 is maintained in
+// circlehash64_ref.go at
+//
+//     https://github.com/fxamacker/circlehash
 
 package circlehash
 
@@ -52,7 +57,7 @@ const (
 )
 
 var countCircleHash64f uint64 // count calls to Hash64 (doesn't include calls to HashString64)
-var collisions = make(map[uint64]uint64) // a few inputs are repeated in tests, so this will be nonzero
+var collisions = make(map[uint64]uint64)
 
 func TestCircleHash64EmptyInputs(t *testing.T) {
 
@@ -199,14 +204,89 @@ func TestCircleHash64NonUniformBitPatternInputs(t *testing.T) {
 		})
 	}
 
-	/* TODO: (Optional) Repeat tests after inverting the input data.
-	// Create 16 KiB of test data with every bit of data inverted,
-	// to make tests cover all 131072 bits as both 0 and 1.
+	// Repeat tests using inverted input data.
+
+	// Create the same 16 KiB of test data with each bit inverted.
 	datainv := nonUniformBytes16KiB()
 	for i := 0; i < len(datainv); i++ {
 		datainv[i] ^= uint8(0xFF)
 	}
-	*/
+
+	invertedTestCases := []struct {
+		name                     string
+		seed                     uint64
+		wantSHA512VaringStartPos []byte
+		wantSHA512VaringEndPos   []byte
+	}{
+		{
+			"inv seed 00s",
+			numsAllZeros,
+			decodeHexOrPanic("5de228628eb602cc3e9cad7f2c9698a17589aabbbc4426fe5db7e8779f9d7510739c7f5a6a0f011a0071922410bddc3f912754f9f52c1fcfab9f067b2e135924"),
+			decodeHexOrPanic("f20a0bc89a8c3a9547c708e17520d8c3fd58dae9026d623849b6d4f096f7641fc78dc3cc5fcba8de498ffa7124aacf369e9c26b8578fffcb2e6ef3fb5334f626"),
+		},
+
+		{
+			"inv seed 55s",
+			numsAll55s,
+			decodeHexOrPanic("32613848874a93e43ea3db6ec6c160b052d80c86831262162ba413bdf3da9107bb367e8d69d1c7b5086493ea101f059694943174e25cb269b6fe66cc0ba92f08"),
+			decodeHexOrPanic("1459a581c50a7eaaf95980ec186217e8073152810373499aa65da81055421eb506d558ce632e70b92882e02490843d36967c75fc807d95d2f302a1968e72b2ba"),
+		},
+
+		{
+			"inv seed AAs",
+			numsAllAAs,
+			decodeHexOrPanic("0e3bfed4a9d6bfc1f63276d1b0664b391484f18274bf36c2a206d7a36af74c3f6fd418dda361ba0558546c8e1cd384abeec7362822f1d43c406120655843cd44"),
+			decodeHexOrPanic("210f1daec1051da6bc08520c670b9cb0823106212abbc97912b005903597fc8822663ac82855ba7bebdaac4c2fc53d95abdc11d64c2a8a9473f4bb16cd62d026"),
+		},
+
+		{
+			"inv seed FFs",
+			numsAllFFs,
+			decodeHexOrPanic("2bb421510b20803d47d81616e01a5e9fec80455ba4c2790f5e913fa2ff4cca9c87f0e00ec1f90ddc93cb2803f438945eda5f25c4b7ae076e4b63e6d80c3c2fe7"),
+			decodeHexOrPanic("37bd28edff26adf06bd915d5b13261301c4e9ac1b8cd3f6c1072f9515b1182beabec5e186bf607d04ac950264b497e5c3dea03ec2f6042e74bd608b98fff2223"),
+		},
+
+		{
+			"inv seed GR",
+			numsGoldenRatio,
+			decodeHexOrPanic("18d7a3c93ec537ab3223cd8144d2ef613b2a8cec5ac5cd9ce4952c4f67448fd99a01ee813f78584da05dd536c11052e974d346359f4e845470d344c2f0ac209a"),
+			decodeHexOrPanic("2cd2944d539ef7ef08d0d1d40d05141928131e51fe5f4dc714d0992da77c461af2930dda506beb17fa81e2b94ebe8285f46046354a40c08b2bab2ae60b0c038d"),
+		},
+
+		{
+			"inv seed GRI",
+			numsGoldenRatioInv,
+			decodeHexOrPanic("977c8d171582b8dd41b6ad5909af7a45d8c62a5b16b32c2fc2d83986e98c2dca0e62748660ff68de89ec14ceed7fdddf29d99441870259be32f940c01202597f"),
+			decodeHexOrPanic("a9bb403ffa62c5eb65dccf9017233383c23f12a1c82957e1f630a48f3785ef53b2637da91369dbeb8ec52865ec44fba175021d1eea6c87c4ed6cd2fee33dc363"),
+		},
+	}
+
+	for _, tc := range invertedTestCases {
+		t.Run(fmt.Sprintf(tc.name), func(t *testing.T) {
+
+			h := sha512.New()
+
+			// verify hash of 1-16384 bytes of test data by varying start pos
+			checksumVaryingStartPos(t, h, tc.seed, datainv)
+			got := h.Sum(nil)
+			if !bytes.Equal(got, tc.wantSHA512VaringStartPos) {
+				t.Errorf("checksumVaryingStartPos(nonuniform16KiB) = 0x%0128x; want 0x%0128x",
+					got,
+					tc.wantSHA512VaringStartPos)
+			}
+
+			h.Reset()
+
+			// verify hash of 1-16384 bytes of test data by varying end pos
+			checksumVaryingEndPos(t, h, tc.seed, datainv)
+			got = h.Sum(nil)
+			if !bytes.Equal(got, tc.wantSHA512VaringEndPos) {
+				t.Errorf("checksumVaryingEndPos(nonuniform16KiB) = 0x%0128x; want 0x%0128x",
+					got,
+					tc.wantSHA512VaringEndPos)
+			}
+		})
+	}
 
 }
 
