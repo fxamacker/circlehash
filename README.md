@@ -1,9 +1,23 @@
-# CircleHash
+<p align="center">
+  <img height="120" src="https://user-images.githubusercontent.com/33205765/158502446-f96d007e-2b58-46af-88a0-895a475af958.png" />
+<p/>
 
-[![](https://github.com/fxamacker/circlehash/workflows/CI/badge.svg)](https://github.com/fxamacker/circlehash/actions?query=workflow%3ACI)
-[![](https://github.com/fxamacker/circlehash/workflows/linters/badge.svg)](https://github.com/fxamacker/circlehash/actions?query=workflow%3Alinters)
-[![CodeQL](https://github.com/fxamacker/circlehash/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/fxamacker/circlehash/actions/workflows/codeql-analysis.yml)
-[![](https://github.com/fxamacker/circlehash/workflows/cover%20100%25/badge.svg)](https://github.com/fxamacker/circlehash/actions?query=workflow%3A%22cover+100%25%22)
+<p align="center">
+  <a href="https://github.com/fxamacker/circlehash/actions?query=workflow%3ACI">
+    <img src="https://github.com/fxamacker/circlehash/workflows/CI/badge.svg" />
+  </a>
+  <a href="https://github.com/fxamacker/circlehash/actions?query=workflow%3Alinters">
+    <img src="https://github.com/fxamacker/circlehash/workflows/linters/badge.svg" />
+  </a> 
+  <a href="https://github.com/fxamacker/circlehash/actions/workflows/codeql-analysis.yml">
+    <img src="https://github.com/fxamacker/circlehash/actions/workflows/codeql-analysis.yml/badge.svg" />
+  </a>
+  <a href="https://github.com/fxamacker/circlehash/actions?query=workflow%3A%22cover+100%25%22">
+    <img src="https://github.com/fxamacker/circlehash/workflows/cover%20100%25/badge.svg" />
+  </a>
+</p>
+
+# CircleHash
 
 CircleHash is a family of modern non-cryptographic hash functions.
 
@@ -60,23 +74,41 @@ CircleHash64 uses CircleHash64f by default and supports 64-bit seeds.  It was cr
 
 ## Benchmarks
 
-CircleHash64f is ideal for input sizes <= 512 bytes.  Larger inputs can be hashed faster using other CircleHash designs (not yet published).
+CircleHash64 is ideal for input sizes <= 512 bytes.  Larger inputs can be hashed faster using other CircleHash designs (not yet published).
 
-For best results, it's better to do your own benchmarks using your own hardware and your most common data sizes.
+For best results, it's better to run your own benchmarks on your own hardware with your most common data sizes.
 
 Coming soon...
 
-## Status [DRAFT]
+## Status
 
 CircleHash64 is currently used in production on linux_amd64.  Other platforms may work but they are not officially supported yet.
 
-circlehash64_ref.go is reference implementation.  Go 1.17 and newer will use circlehash64.go which is faster while being 100% compatible.
+Idiomatic API is planned.  There are 3 functions exported by the stop-gap API:
+
+```Go
+func Hash64(b []byte, seed uint64) uint64
+func Hash64String(s string, seed uint64) uint64
+func Hash64Uint64x2(a uint64, b uint64, seed uint64) uint64 
+```
+
+Rather than port SMHasher and other test suites to Go, the C++ implementation is used for those tests.
+
+
+- circlehash64_ref.go -- reference implementation used by Go 1.16 and older versions.
+- circlehash64.go -- faster implementation used by Go 1.17 and newer versions.
+- circlehash64_test.go -- tests that verify digests with expected results for various input sizes using different seeds.
+
 
 ## Release Policy
 
 This project uses Semantic Versioning 2.0.  
 
 As an exception, some variants of CircleHash may be declared stable before this repo reaches v1.0.  I.e. given the same input data, the hash function will always produce the same digest.  Such declarations will be noted in the README and applicable release notes.
+
+## Contributing
+
+If you would like to contribute to CircleHash, have a look at the [contributing guide](CONTRIBUTING.md).
 
 ## Special Thanks and Credits
   - Go Team for making programming more fun and productive.
