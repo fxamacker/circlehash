@@ -41,7 +41,7 @@ func Hash64Uint64x2(a uint64, b uint64, seed uint64) uint64
 
 |                | CircleHash64 | Abseil C++ | SipHash-2-4 | xxh64 |
 | :---           | :---:         | :---:  | :---: | :---: |
-| SAC worst-bit <br/> 0-128 byte inputs <br/> (lower % is better) | 0.791% 🥇 <br/> w/ 99 bytes | 0.862% <br/> w/ 67 bytes | 0.852% <br/> w/ 125 bytes | 0.832% <br/> w/ 113 bytes |
+| SAC worst-bit <br/> 0-128 byte inputs <br/> (lower % is better) | 0.791% 🥇 <br/> w/ 99 bytes | 0.862% <br/> w/ 67 bytes | 0.802% <br/> w/ 75 & 117 bytes | 0.832% <br/> w/ 113 bytes |
 
 ☝️ Using demerphq/smhasher updated to test all input sizes 0-128 bytes (SAC test will take hours longer to run).
 
@@ -102,7 +102,7 @@ The most important files are:
 
 A more extensive and idiomatic API is being considered.  However, currently exported CircleHash64 functions are unlikely to be affected.
 
-CircleHash64fx has not yet been published because CircleHash64f (aka CircleHash64) is faster and there hasn't been a need.
+CircleHash64fx will likely replace CircleHash64f as the default CircleHash64.
 
 ## Release Policy
 
@@ -110,7 +110,7 @@ This project uses Semantic Versioning 2.0.
 
 As an exception, some variants of CircleHash may be declared stable before this repo reaches v1.0.  I.e. given the same input data, the hash function will always produce the same digest.  Such declarations will be noted in the README and applicable release notes.
 
-CircleHash64f is stable.  Given the same input data and seed, it will always produce the same digest in future versions.
+CircleHash64f will be replaced by CircleHash64fx as the default CircleHash64.
 
 ## Contributing
 
