@@ -41,7 +41,7 @@ func Hash64Uint64x2(a uint64, b uint64, seed uint64) uint64
 
 |                | CircleHash64 | Abseil C++ | SipHash-2-4 | xxh64 |
 | :---           | :---:         | :---:  | :---: | :---: |
-| SAC worst-bit <br/> 0-128 byte inputs <br/> (lower % is better) | 0.791% 🥇 <br/> w/ 99 bytes | 0.862% <br/> w/ 67 bytes | 0.802% <br/> w/ 75 & 117 bytes | 0.832% <br/> w/ 113 bytes |
+| SAC worst-bit <br/> 0-128 byte inputs <br/> (lower % is better) | 0.791% 🥇 <br/> w/ 99 bytes | 0.862% <br/> w/ 67 bytes | 0.802% <br/> w/ 75 & 117 bytes | 0.817% <br/> w/ 84 bytes |
 
 ☝️ Using demerphq/smhasher updated to test all input sizes 0-128 bytes (SAC test will take hours longer to run).
 
