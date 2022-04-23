@@ -21,11 +21,19 @@
 
 CircleHash is a family of modern non-cryptographic hash functions.
 
-CircleHash64 is a 64-bit hash with a 64-bit seed.  It's fast, simple, and easy to audit.  It uses fractional digits of **π** as default constants ([nothing up my sleeve](https://en.wikipedia.org/wiki/Nothing-up-my-sleeve_number)).  It balances speed, digest quality, and maintainability.
+CircleHash64fx is a 64-bit hash with a 128-bit seed.  It's fast, simple, and easy to audit.  By default, it uses fractional digits of **π** as constants ([nothing up my sleeve](https://en.wikipedia.org/wiki/Nothing-up-my-sleeve_number)).  It balances speed, digest quality, and maintainability.
 
-CircleHash64 is based on [Google's Abseil C++ library](https://abseil.io/about/) internal hash.  It passes every test in SMHasher (demerphq/smhasher, rurban/smhasher, and my stricter test suite).  Tests passed include  Bit Independence Criterion, [Strict Avalanche Criterion](https://en.wikipedia.org/wiki/Avalanche_effect#Strict_avalanche_criterion), etc.
+CircleHash64fx is inspired by [Google's Abseil C++ library](https://abseil.io/about/) internal hash.  They pass every test in SMHasher (demerphq/smhasher, rurban/smhasher, and my stricter test suite).  Tests passed include Bit Independence Criterion, [Strict Avalanche Criterion](https://en.wikipedia.org/wiki/Avalanche_effect#Strict_avalanche_criterion), etc.
 
-Three CircleHash64 functions are currently used in production (on linux_amd64):
+CircleHash64 comes in two flavors:
+
+- 🛡️ **CircleHash64fx** supports 128-bit seed and shields against losing accumulated state from potential multiplication by zero. It's a bit slower than CircleHash64f but remains among the fastest for short inputs.
+
+- 🚀 **CircleHash64f** supports 64-bit seed like Abseil LTS 20210324.2.  By default, CircleHash64f uses two different 64-bit constants rather than using the same 64-bit constant twice at finalization.
+
+CircleHash64fx will be replacing CircleHash64f as the default hash.
+
+Three CircleHash64f functions are currently used in production (on linux_amd64):
 
 ```Go
 func Hash64(b []byte, seed uint64) uint64
@@ -73,12 +81,6 @@ Existing non-cryptographic hash libraries in Go either failed SMhasher tests, di
 After testing and evaluations, I chose a slightly more conservative design than Go 1.17 internal hash and wyhash_final3 variants.  CircleHash64 functions are based primarily on [Abseil's](https://abseil.io/about/) internal hash (which was based on an older wyhash).
 
 > Abseil is an open source collection of C++ libraries drawn from the most fundamental pieces of Google’s internal codebase. These libraries are the nuts-and-bolts that underpin almost everything Google runs. [...] Abseil encompasses the most basic building blocks of Google’s codebase: code that is production-tested and will be fully maintained for years to come.
-
-CircleHash was created when I needed a very fast seeded hash for inputs mostly <= 128 bytes.  CircleHash64 comes in two flavors:
-
-- 🛡️ **CircleHash64fx** (unlike Abseil's internal hash) supports 128-bit seed and shields against losing accumulated state from potential multiplication by zero. It's a bit slower than CircleHash64f but remains among the fastest for short inputs.
-
-- 🚀 **CircleHash64f** is very similar to Abseil LTS 20210324.2 and supports 64-bit seed.  By default, CircleHash64f uses two different 64-bit constants rather than using the same 64-bit constant twice at finalization.  And unlike internal hashes, CircleHash64f offers backward compatibility (SemVer 2.0).
 
 CircleHash64 currently uses CircleHash64f by default with 64-bit seeds.  Default hash will switch to CircleHash64fx which supports 128-bit seeds.  
 
