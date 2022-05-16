@@ -15,6 +15,10 @@
 # 2. Update README.md to use the new path to badge.svg because the path includes the workflow name.
 
 name: cover 100%
+
+# Remove default permissions.
+permissions: {}
+
 on: [push]
 jobs:
 
@@ -22,6 +26,8 @@ jobs:
   # The grep expression can't be too strict, it needed to be relaxed to work with different versions of Go.
   cover:
     name: Coverage on ${{matrix.os}}
+    permissions:
+      contents: read
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
