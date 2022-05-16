@@ -1,5 +1,8 @@
 name: "CodeQL"
 
+# Remove default permissions.
+permissions: {}
+
 on:
   push:
     branches: [ main ]
