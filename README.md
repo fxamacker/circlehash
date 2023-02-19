@@ -70,19 +70,17 @@ func Hash64Uint64x2(a uint64, b uint64, seed uint64) uint64
 
 ## Why CircleHash?
 
-I wanted a fast, maintainable, and easy-to-audit 64-bit hash function that's free of backdoors and bugs.  It needed to be very fast at hashing short inputs with a 64-bit seed.
+I wanted a fast, maintainable, and easy-to-audit 64-bit hash function that's free of backdoors and bugs.  It needed to be very fast at hashing short inputs with at least a 64-bit seed.
 
-It also needed to pass all tests in demerphq/smhasher, rurban/smhasher, and my test suite.  And have sufficiently explained choice of default constants and avoid over-optimizations that increase risk of being affected by bad seeds or efficient seed-independent attacks.
-
-Existing non-cryptographic hash libraries in Go either failed SMhasher tests, didn't support seeds, were too slow, were overly complicated, lacked sufficient explanation for their default constants, lacked sufficient tests, or appeared to be unmaintained.
+It also needed to pass all tests in demerphq/smhasher, rurban/smhasher, and my test suite.  It was important to have sufficiently explained choice of default constants and avoid over-optimizations that increased complexity to the point of harming maintainability.
 
 ## CircleHash Design
 
-After testing and evaluations, I chose a slightly more conservative design than Go 1.17 internal hash and wyhash_final3 variants.  CircleHash64 functions are based primarily on [Abseil's](https://abseil.io/about/) internal hash (which was based on an older wyhash).
+I didn't want to reinvent the wheel.  After testing and evaluating existing hashes, I chose a slightly more conservative design than Go 1.17 internal hash and wyhash_final3 variants.  CircleHash64f is based primarily on [Abseil's](https://abseil.io/about/) internal hash (which was based on an older wyhash). CircleHash64fx is a larger departure from the original design and has support for 128-bit seeds plus other improvements.
 
 > Abseil is an open source collection of C++ libraries drawn from the most fundamental pieces of Google’s internal codebase. These libraries are the nuts-and-bolts that underpin almost everything Google runs. [...] Abseil encompasses the most basic building blocks of Google’s codebase: code that is production-tested and will be fully maintained for years to come.
 
-CircleHash64 currently uses CircleHash64f by default with 64-bit seeds.  Default hash will switch to CircleHash64fx which supports 128-bit seeds.  
+CircleHash64 currently uses CircleHash64f by default with 64-bit seeds.  Default hash will switch to CircleHash64fx which supports 128-bit seeds plus other improvements.
 
 ## Benchmarks
 
@@ -102,9 +100,7 @@ The most important files are:
 - circlehash64.go -- faster implementation used by Go 1.17 and newer versions.
 - circlehash64_test.go -- tests that verify digests with expected results for various input sizes using different seeds.  Rather than port SMHasher and other test suites to Go, the C++ implementation is used for those additional tests.
 
-A more extensive and idiomatic API is being considered.  However, currently exported CircleHash64 functions are unlikely to be affected.
-
-CircleHash64fx will replace CircleHash64f as the default CircleHash64.  CircleHash64fx supports 128-bit seeds.
+CircleHash64fx will replace CircleHash64f as the default hash.  CircleHash64fx supports 128-bit seeds and will include other improvements such as idiomatic and full-featured API.
 
 ## Release Policy
 
