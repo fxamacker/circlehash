@@ -114,7 +114,8 @@ CircleHash64f will be replaced by CircleHash64fx as the default CircleHash64.
 
 Please read [contributing guide](CONTRIBUTING.md) if you would like to contribute to CircleHash.
 
-## Special Thanks and Credits
+## Acknowledgments
+  - There are at least two people I would like to acknowledge (after I improve this repo).
   - Go Team for making programming more fun and productive.
   - Abseil team for producing some of the best and cleanest C++ code I've ever seen.
   - Reini Urban and Yves Orton for publishing their SMHasher improvements in rurban/smhasher and demerphq/smhasher.
