@@ -37,7 +37,7 @@ func Hash64(b []byte, seed uint64) uint64 {
 	if len(b) > 64 {
 		fn = circle64f
 	}
-	return uint64(fn(*(*unsafe.Pointer)(unsafe.Pointer(&b)), seed, uint64(len(b))))
+	return fn(*(*unsafe.Pointer)(unsafe.Pointer(&b)), seed, uint64(len(b)))
 }
 
 // Hash64String returns a 64-bit digest of s.
@@ -47,7 +47,7 @@ func Hash64String(s string, seed uint64) uint64 {
 	if len(s) > 64 {
 		fn = circle64f
 	}
-	return uint64(fn(*(*unsafe.Pointer)(unsafe.Pointer(&s)), seed, uint64(len(s))))
+	return fn(*(*unsafe.Pointer)(unsafe.Pointer(&s)), seed, uint64(len(s)))
 }
 
 // Hash64Uint64x2 returns a 64-bit digest of a and b.
