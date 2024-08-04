@@ -139,7 +139,7 @@ func circle64f(p unsafe.Pointer, seed uint64, dlen uint64) uint64 {
 			p = add(p, 64)
 		}
 
-		currentState = currentState ^ duplicatedState
+		currentState ^= duplicatedState
 	}
 
 	// We have at most 64 bytes to process.
