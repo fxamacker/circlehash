@@ -4,7 +4,7 @@ linters-settings:
   depguard:
     rules:
       prevent_unmaintained_packages:
-        list-mode: strict 
+        list-mode: strict
         files:
           - $all
           - "!$test"
@@ -63,6 +63,7 @@ linters:
     - errcheck
     - exportloopref
     - goconst
+    - gocritic
     - gocyclo
     - gofmt
     - goimports

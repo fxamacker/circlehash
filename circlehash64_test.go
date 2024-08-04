@@ -294,7 +294,7 @@ func TestCircleHash64NonUniformBitPatternInputs(t *testing.T) {
 // digests using input of repeated byte values (0x00 to 0xFF).
 // Input sizes range from 1 to 256 bytes.
 func checksumUniformBitPatternInputs(t *testing.T, seed uint64) []byte {
-	sha512 := sha512.New()
+	h := sha512.New()
 
 	// Check 65536 digests on uniform byte fills (0x00-0xFF) of varying lengths
 	for pattern := 0; pattern <= 255; pattern++ {
@@ -311,11 +311,11 @@ func checksumUniformBitPatternInputs(t *testing.T, seed uint64) []byte {
 			binary.LittleEndian.PutUint64(b, digest)
 
 			// Feed CircleHash64 result into SHA-512.
-			sha512.Write(b)
+			h.Write(b)
 		}
 	}
 
-	return sha512.Sum(nil)
+	return h.Sum(nil)
 }
 
 // checksumVaryingStartPos updates cryptoHash512 with
