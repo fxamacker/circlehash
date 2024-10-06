@@ -14,7 +14,7 @@
 # 1. Change workflow name from "cover 100%" to "cover ≥92.5%". Script will automatically use 92.5%.  
 # 2. Update README.md to use the new path to badge.svg because the path includes the workflow name.
 
-name: cover ≥100%
+name: cover 100%
 
 # Remove default permissions.
 permissions: {}
@@ -44,6 +44,8 @@ jobs:
     - name: Install Go
       uses: actions/setup-go@0a12ed9d6a96ab950c8f026ed9f722fe0da7ef32 # v5.0.2
       with:
+        # Support for go1.16 (*_oldgo.go) is deprecated as of Sunday,l Oct 6, 2024 so it won't be checked.
+        # Coverage test will fail if it drops below 100% and we only need one version of Go here.
         go-version: 1.23
         check-latest: true
     - name: Install x448/float16
