@@ -12,10 +12,9 @@ on:
   pull_request:
       # Run on pull request for all branches.
   push:
-    branches:
       # Run on push for all branches.
   schedule:
-    - cron: '45 12 * * 0' # Run daily at 12:45 UTC / 7:45 AM Central.
+    - cron: '45 12 * * *' # Run daily at 12:45 UTC / 7:45 AM Central.
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
