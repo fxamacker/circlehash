@@ -5,7 +5,7 @@ permissions: {}
 
 on:
   push:
-    branches: [ main ]
+    # Run on push in all branches.
   pull_request:
     # Run on pull requests in all branches.
   schedule:
