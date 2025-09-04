@@ -42,7 +42,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
     - name: Install Go
-      uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
+      uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
       with:
         # Support for go1.16 (*_oldgo.go) is deprecated as of Sunday,l Oct 6, 2024 so it won't be checked.
         # Coverage test will fail if it drops below 100% and we only need one version of Go here.
