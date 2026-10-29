@@ -8,8 +8,7 @@ updates:
       day: "wednesday"
       time: "12:00"
       timezone: "UTC"
-
-  - package-ecosystem: "gomod"
-    directory: "/"
-    schedule:
-      interval: "daily"
+    groups:
+      codeql:
+        patterns:
+          - "github/codeql-action*"
